@@ -1,25 +1,47 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import List from './components/List';
+import key from './key.js';
 
 class App extends Component {
+
+  constructor() {
+    super();
+    this.state = {
+      apiData: null,
+      isLoaded: false,
+    }
+  }
+
+  componentDidMount() {
+
+    fetch(`https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=${key}`)
+    .then(res => res.json())
+    .then(json => this.setState({
+      apiData: json.articles,
+      isLoaded: true
+    }));
+
+  }
+
+  renderList() {
+    if (this.state.isLoaded) {
+      return <List apiData={this.state.apiData} />;
+    } else {
+      return <p>Loading...</p>;
+    }
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <Header />
+          <main>
+            {this.renderList()}
+          </main>
+        <Footer />
       </div>
     );
   }
